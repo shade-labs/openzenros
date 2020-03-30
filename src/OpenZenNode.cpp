@@ -67,8 +67,8 @@ class OpenZenSensor
             imu_msg.angular_velocity.z = d.g[2] * cDegToRad;
 
             // Fill linear acceleration data
-            const float rosConversion = -1.0 * (!param.useLpmsAccelerationConvetion) +
-                1.0 * param.useLpmsAccelerationConvetion;
+            const float rosConversion = -1.0 * (!param.useLpmsAccelerationConvention) +
+                1.0 * param.useLpmsAccelerationConvention;
 
             imu_msg.linear_acceleration.x = rosConversion * d.a[0] * cEarthG;
             imu_msg.linear_acceleration.y = rosConversion * d.a[1] * cEarthG;
@@ -100,7 +100,7 @@ class OpenZenSensor
         // the sensor is lying flat on the table. ROS convention is z+ pointing up in this case
         // By default, this ROS driver converts to the ROS convention. Set this flag to true to
         // use the LPMS convention
-        private_nh.param<bool>("use_lpms_acceleration_convention", m_useLpmsAccelerationConvetion, false);
+        private_nh.param<bool>("use_lpms_acceleration_convention", m_useLpmsAccelerationConvention, false);
         private_nh.param<std::string>("frame_id", frame_id, "imu");
         imu_pub = nh.advertise<sensor_msgs::Imu>("imu",1);
         mag_pub = nh.advertise<sensor_msgs::MagneticField>("mag",1);
@@ -206,7 +206,7 @@ class OpenZenSensor
             frame_id,
             imu_pub,
             mag_pub,
-            m_useLpmsAccelerationConvetion
+            m_useLpmsAccelerationConvention
         } );
 
         ROS_INFO("Data streaming from sensor started");
@@ -225,7 +225,7 @@ class OpenZenSensor
     std::unique_ptr<zen::ZenSensor> m_zenSensor;
 
     bool m_openzenVerbose;
-    bool m_useLpmsAccelerationConvetion;
+    bool m_useLpmsAccelerationConvention;
 
     // Parameters
     std::string m_sensorName;
@@ -238,7 +238,7 @@ class OpenZenSensor
         std::string frame_id;
         ros::Publisher & imu_pub;
         ros::Publisher & mag_pub;
-        bool useLpmsAccelerationConvetion;
+        bool useLpmsAccelerationConvention;
     };
 
     ManagedThread<SensorThreadParams> m_sensorThread;
