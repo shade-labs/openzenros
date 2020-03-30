@@ -54,3 +54,10 @@ Or plot some values (for example linear acceleration) with
 ```
 rosrun rqt_plot rqt_plot "/imu/linear_acceleration/"
 ```
+
+If you want to readout the values of two OpenZen sensors simultanously, you need to rename the topics and the node names likes this:
+
+```
+rosrun openzen_sensor openzen_sensor __name:="cu2node" _sensor_name:="LPMSCU2000573" imu:=/cu2_imu mag:=/cu2_mag/
+rosrun openzen_sensor openzen_sensor __name:="ig1_node" _sensor_name:="LPMSIG1000032" imu:=/ig1_imu mag:=/ig1_mag/
+```
