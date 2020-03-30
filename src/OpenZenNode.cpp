@@ -172,7 +172,7 @@ class OpenZenSensor
             auto sensorObtainPair = m_zenClient->obtainSensor(foundSens);
 
             if (sensorObtainPair.first != ZenSensorInitError_None) {
-                ROS_ERROR("Cannot connect to sensor found with discovery");
+                ROS_ERROR("Cannot connect to sensor found with discovery. Make sure you have the user rights to access serial devices.");
                 return;
             }
             m_zenSensor = std::unique_ptr<zen::ZenSensor>( new zen::ZenSensor(std::move(sensorObtainPair.second)));
@@ -182,7 +182,7 @@ class OpenZenSensor
             auto sensorObtainPair = m_zenClient->obtainSensorByName(m_sensorInterface, m_sensorName);
 
             if (sensorObtainPair.first != ZenSensorInitError_None) {
-                ROS_ERROR("Cannot connect directly to sensor");
+                ROS_ERROR("Cannot connect directly to sensor.  Make sure you have the user rights to access serial devices.");
                 return;
             }
             m_zenSensor = std::unique_ptr<zen::ZenSensor>( new zen::ZenSensor(std::move(sensorObtainPair.second)));
