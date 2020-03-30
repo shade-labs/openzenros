@@ -21,6 +21,15 @@ Open another terminal window and run the ROS core:
 roscore
 ```
 
+To allow access to sensors connected via USB, you need to ensure that the user running the ROS sensor node
+has access to the /dev/ttyUSB devices. You can do this by adding the user to the dialout group.
+
+```
+sudo adduser <username> dialout
+```
+
+After this call, you should logout and login with this user to ensure the changed permissions are in effect.
+
 You can then run the OpenZen ROS driver with this command:
 
 ```
