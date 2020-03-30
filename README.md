@@ -1,0 +1,47 @@
+# OpenZen Node for ROS
+
+This software allows to forward sensor data from sensor connected via OpenZen to ROS.
+
+To use it in your ROS setup, follow these steps:
+```
+mkdir -p catskin_ws/src
+cd catskin_ws/src
+
+git clone --recurse-submodules https://bitbucket.org/lpresearch/openzenros.git
+
+# get your ROS environment going
+source /opt/ros/melodic/setup.bash
+source ./devel/setup.bash
+catkin_make
+```
+
+Open another terminal window and run the ROS core:
+
+```
+roscore
+```
+
+You can then run the OpenZen ROS driver with this command:
+
+```
+rosrun openzen_sensor openzen_sensor
+```
+
+By default, it will connect to the first available sensor. If you want to connect to
+a specific sensor, you can use the serial name of the sensor as parameter, for example:
+
+```
+ _openzen_verbose:=false _sensor_name:="LPMSCU2000573" 
+```
+
+Now you can print the IMU values from ROS with:
+
+```
+rostopic echo /imu
+```
+
+Or plot some values (for example linear acceleration) with 
+
+```
+rosrun rqt_plot rqt_plot "/imu/linear_acceleration/"
+```
