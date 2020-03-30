@@ -11,8 +11,8 @@ git clone --recurse-submodules https://bitbucket.org/lpresearch/openzenros.git
 
 # get your ROS environment going
 source /opt/ros/melodic/setup.bash
-source ./devel/setup.bash
 catkin_make
+source ./devel/setup.bash
 ```
 
 Open another terminal window and run the ROS core:
@@ -31,7 +31,7 @@ By default, it will connect to the first available sensor. If you want to connec
 a specific sensor, you can use the serial name of the sensor as parameter, for example:
 
 ```
- _openzen_verbose:=false _sensor_name:="LPMSCU2000573" 
+rosrun openzen_sensor openzen_sensor _sensor_name:="LPMSCU2000573"
 ```
 
 Now you can print the IMU values from ROS with:
