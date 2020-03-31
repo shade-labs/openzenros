@@ -2,7 +2,33 @@
 
 This software allows to forward sensor data from sensor connected via OpenZen to ROS.
 
-To use it in your ROS setup, follow these steps:
+OpenZen is a library for high performance sensor data streaming and processing and supports multiple sensor models: <https://bitbucket.org/lpresearch/openzen/>
+
+## Requirements
+
+### Tools & Compiler
+
+To compile this software, at least G++ version 7.0 and cmake version 3.10 need to be installed. If your default compiler is an older version
+you can install a recent GCC with your distributions package manager and provide the name of the GCC to the catkin_make command
+like so:
+
+```
+catkin_make -DCMAKE_C_COMPILER=gcc-7 -DCMAKE_CXX_COMPILER=g++-7
+```
+### Serial Port Access Rights
+
+After this call, you should logout and login with this user to ensure the changed permissions are in effect.
+
+To allow access to sensors connected via USB, you need to ensure that the user running the ROS sensor node
+has access to the /dev/ttyUSB devices. You can do this by adding the user to the dialout group.
+
+```
+sudo adduser <username> dialout
+```
+
+## Compilation
+
+To compile this driver in your ROS setup, follow these steps:
 ```
 mkdir -p catskin_ws/src
 cd catskin_ws/src
@@ -14,23 +40,17 @@ source /opt/ros/melodic/setup.bash
 catkin_make
 source ./devel/setup.bash
 ```
+## Running the Driver
 
 Open another terminal window and run the ROS core:
 
 ```
+source /opt/ros/melodic/setup.bash
 roscore
 ```
 
-To allow access to sensors connected via USB, you need to ensure that the user running the ROS sensor node
-has access to the /dev/ttyUSB devices. You can do this by adding the user to the dialout group.
-
-```
-sudo adduser <username> dialout
-```
-
-After this call, you should logout and login with this user to ensure the changed permissions are in effect.
-
-You can then run the OpenZen ROS driver with this command:
+You can then run the OpenZen ROS driver with this command in the window
+you used to compile the software:
 
 ```
 rosrun openzen_sensor openzen_sensor
