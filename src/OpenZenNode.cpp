@@ -33,6 +33,7 @@ public:
     std::string m_sensorName;
     std::string m_sensorInterface;
     std::string frame_id;
+    int m_baudrate = 0;
 
 
     OpenZenSensor(ros::NodeHandle h): 
@@ -123,6 +124,8 @@ public:
         private_nh.param<std::string>("sensor_name", m_sensorName, "");
         private_nh.param<std::string>("sensor_interface", m_sensorInterface, "LinuxDevice");
         private_nh.param<bool>("openzen_verbose", m_openzenVerbose, false);
+        // using 0 as default will tell OpenZen to use the defaul baudrate for a respective sensor
+        private_nh.param("baudrate", m_baudrate, 0);
 
         // In LP-Research sensor output, the linear acceleration measurement is pointing down (z-) when
         // the sensor is lying flat on the table. ROS convention is z+ pointing up in this case
@@ -216,6 +219,11 @@ public:
             }
 
             ROS_INFO_STREAM("Connecting to found sensor " << foundSens.serialNumber << " on IO system " << foundSens.ioType);
+            // if a baudRate has been set, override the default given by OpenZen listing
+            if (m_baudrate > 0) {
+                foundSens.baudRate = m_baudrate;
+            }
+
             auto sensorObtainPair = m_zenClient->obtainSensor(foundSens);
 
             if (sensorObtainPair.first != ZenSensorInitError_None)
@@ -229,7 +237,7 @@ public:
         {
             // directly connect to sensor
             ROS_INFO_STREAM("Connecting directly to sensor " << m_sensorName << " over interface " << m_sensorInterface);
-            auto sensorObtainPair = m_zenClient->obtainSensorByName(m_sensorInterface, m_sensorName);
+            auto sensorObtainPair = m_zenClient->obtainSensorByName(m_sensorInterface, m_sensorName, m_baudrate);
 
             if (sensorObtainPair.first != ZenSensorInitError_None)
             {
