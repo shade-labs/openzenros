@@ -89,4 +89,4 @@ roslaunch openzen_sensor openzen_lpms_ig1.launch
 
 
 ## API
-Please refer to our [ROS API documentation](https://lpresearch.bitbucket.io/openzen/latest/ros.html#ros-api){:target="_blank"} for further details. 
+Please refer to our [ROS API documentation](https://lpresearch.bitbucket.io/openzen/latest/ros.html#ros-api) for further details. 
