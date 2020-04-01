@@ -53,31 +53,40 @@ You can then run the OpenZen ROS driver with this command in the window
 you used to compile the software:
 
 ```
-rosrun openzen_sensor openzen_sensor
+rosrun openzen_sensor openzen_sensor_node
 ```
 
 By default, it will connect to the first available sensor. If you want to connect to
 a specific sensor, you can use the serial name of the sensor as parameter, for example:
 
 ```
-rosrun openzen_sensor openzen_sensor _sensor_name:="LPMSCU2000573"
+rosrun openzen_sensor openzen_sensor_node _sensor_name:="LPMSCU2000573"
 ```
 
 Now you can print the IMU values from ROS with:
 
 ```
-rostopic echo /imu
+rostopic echo /imu/data
 ```
 
 Or plot some values (for example linear acceleration) with 
 
 ```
-rosrun rqt_plot rqt_plot "/imu/linear_acceleration/"
+rosrun rqt_plot rqt_plot /imu/data/linear_acceleration
 ```
 
 If you want to readout the values of two OpenZen sensors simultanously, you need to rename the topics and the node names likes this:
 
 ```
-rosrun openzen_sensor openzen_sensor __name:="cu2node" _sensor_name:="LPMSCU2000573" imu:=/cu2_imu mag:=/cu2_mag/
-rosrun openzen_sensor openzen_sensor __name:="ig1_node" _sensor_name:="LPMSIG1000032" imu:=/ig1_imu mag:=/ig1_mag/
+rosrun openzen_sensor openzen_sensor __name:="cu2node" _sensor_name:="LPMSCU2000573" imu:=/cu2_imu 
+rosrun openzen_sensor openzen_sensor __name:="ig1_node" _sensor_name:="LPMSIG1000032" imu:=/ig1_imu
 ```
+
+Alternatively, we have prepared a sample launch file openzen_lpms_ig1.launch to demonstrate data acquisition and plotting using openzen_sensor_node:
+```
+roslaunch openzen_sensor openzen_lpms_ig1.launch
+```
+
+
+## API
+Please refer to our [ROS API documentation](https://lpresearch.bitbucket.io/openzen/latest/ros.html#ros-api){:target="_blank"} for further details. 

@@ -19,13 +19,19 @@ catkin_package()
 ## Build 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_executable(openzen_sensor
+add_executable(openzen_sensor_node
   src/OpenZenNode.cpp
 )
 
-target_link_libraries(openzen_sensor
+target_link_libraries(openzen_sensor_node
   ${catkin_LIBRARIES}
   OpenZen
 )
 
-add_dependencies(openzen_sensor ${catkin_EXPORTED_TARGETS})
+add_dependencies(openzen_sensor_node ${catkin_EXPORTED_TARGETS})
+
+
+# QuatToEulerNode Helper node
+add_executable(quat_to_euler_node src/QuatToEulerNode.cpp)
+target_link_libraries(quat_to_euler_node ${catkin_LIBRARIES})
+add_dependencies(quat_to_euler_node ${catkin_EXPORTED_TARGETS})

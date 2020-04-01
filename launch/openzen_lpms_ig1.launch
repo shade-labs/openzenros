@@ -1,0 +1,14 @@
+<launch>
+    <!-- IG1 Sensor node -->
+    <node name="ig1_node" pkg="openzen_sensor" type="openzen_sensor_node"/>
+
+    <!-- Quaternion to Euler conversion node -->
+    <node name="quat_to_euler" pkg="openzen_sensor" type="quat_to_euler_node" />
+
+    <!-- Plots -->
+    <node name="plot_imu_gyro" pkg="rqt_plot" type="rqt_plot" 
+        args="/imu/data/angular_velocity" />
+
+    <node name="plot_imu_euler" pkg="rqt_plot" type="rqt_plot"
+        args="/rpy_angles" />
+</launch>
