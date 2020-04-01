@@ -163,7 +163,7 @@ public:
             ZenSetLogLevel(ZenLogLevel_Off);
         }
 
-        // no sensor name given, auto-disove
+        // no sensor name given, auto-discovery
         if (m_sensorName.size() == 0) 
         {
             ROS_INFO_STREAM("OpenZen sensors will be listed");
