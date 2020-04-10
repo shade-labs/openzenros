@@ -269,12 +269,12 @@ public:
         if (!hasImu)
         {
             // error, this sensor does not have an IMU component
-            ROS_ERROR("Wrong sensor type. Current sensor does not support IMU output");
-            return false;
+            ROS_INFO("No IMU component available, sensor control commands won't be available");
+        } else {
+            m_zenImu = std::unique_ptr<zen::ZenSensorComponent>( new zen::ZenSensorComponent(std::move(imuPair.second)));
+            publishIsAutocalibrationActive();
         }
-        m_zenImu = std::unique_ptr<zen::ZenSensorComponent>( new zen::ZenSensorComponent(std::move(imuPair.second)));
-        publishIsAutocalibrationActive();
-        
+
         m_sensorThread.start( SensorThreadParams{
             m_zenClient.get(),
             frame_id,
@@ -296,6 +296,11 @@ public:
     {
         std_msgs::Bool msg;
 
+        if (!m_zenImu) {
+            ROS_INFO("No IMU compontent available, can't publish autocalibration status");
+            return;
+        }
+
         auto resPair = m_zenImu->getBoolProperty(ZenImuProperty_GyrUseAutoCalibration);
         auto error = resPair.first;
         auto useAutoCalibration = resPair.second;
@@ -315,6 +320,11 @@ public:
         ROS_INFO("set_autocalibration");
 
         std::string msg;
+
+        if (!m_zenImu) {
+            ROS_INFO("No IMU compontent available, can't set autocalibration status");
+            return false;
+        }
 
         if (auto error = m_zenImu->setBoolProperty(ZenImuProperty_GyrUseAutoCalibration, req.data))
         {
@@ -337,6 +347,11 @@ public:
 
     bool resetHeading (std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
     {
+        if (!m_zenImu) {
+            ROS_INFO("No IMU compontent available, can't reset heading");
+            return false;
+        }
+
         ROS_INFO("reset_heading");
         // Offset reset parameters:
         // 0: Object reset
@@ -359,6 +374,11 @@ public:
 
     bool calibrateGyroscope (std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
     {
+        if (!m_zenImu) {
+            ROS_INFO("No IMU compontent available, can't start autocalibration");
+            return false;
+        }
+
         ROS_INFO("calibrate_gyroscope: Please make sure the sensor is stationary for 4 seconds");
 
         if (auto error = m_zenImu->executeProperty(ZenImuProperty_CalibrateGyro))
