@@ -10,7 +10,8 @@
     </node>
 
     <!-- Quaternion to Euler conversion node -->
-    <node name="quat_to_euler" pkg="openzen_sensor" type="quat_to_euler_node" />
+    <node name="quat_to_euler" pkg="topic_tools" type="transform"
+        args="/imu/data/orientation /rpy_angles geometry_msgs/Vector3 'tf.transformations.euler_from_quaternion([m.x, m.y, m.z, m.w])' --import tf" />
 
     <test test-name="test_openzen_node" pkg="openzen_sensor" type="test_openzen_readout.py" />
 </launch>

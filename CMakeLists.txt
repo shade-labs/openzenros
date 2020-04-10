@@ -29,9 +29,3 @@ target_link_libraries(openzen_sensor_node
 )
 
 add_dependencies(openzen_sensor_node ${catkin_EXPORTED_TARGETS})
-
-
-# QuatToEulerNode Helper node
-add_executable(quat_to_euler_node src/QuatToEulerNode.cpp)
-target_link_libraries(quat_to_euler_node ${catkin_LIBRARIES})
-add_dependencies(quat_to_euler_node ${catkin_EXPORTED_TARGETS})
