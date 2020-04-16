@@ -1,3 +1,12 @@
+//===========================================================================//
+//
+// Copyright (C) 2020 LP-Research Inc.
+//
+// This file is part of OpenZenRos driver, under the MIT License.
+// See the LICENSE file in the top-most folder for details
+// SPDX-License-Identifier: MIT
+//
+//===========================================================================//
 
 #include "ros/ros.h"
 #include "sensor_msgs/Imu.h"
