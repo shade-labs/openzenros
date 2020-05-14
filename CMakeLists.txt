@@ -31,14 +31,24 @@ else()
   set(OPENZEN_BINARY_FOLDER "${CMAKE_CURRENT_BINARY_DIR}/OpenZenBinary")
   set(OPENZEN_ARCHIVE_FILE "${CMAKE_CURRENT_BINARY_DIR}/OpenZenRelease.tar.gz")
   set(OPENZEN_BASE_FOLDER "${CMAKE_CURRENT_BINARY_DIR}/openzen_release")
-  set(OPENZEN_DOWNLOAD_URL "https://bitbucket.org/lpresearch/openzen/downloads/OpenZen-Ubuntu1604-1.1.0.tar.gz")
+
+  if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    set(OPENZEN_DOWNLOAD_URL "https://bitbucket.org/lpresearch/openzen/downloads/OpenZen-Ubuntu1604-x64-1.1.0.tar.gz")
+    set(OPENZEN_DOWNLOAD_HASH 10f22cdc865ca0f485086e6463b46c61c4fa6ef9f6c5f5c07a4c184015ba1d12)
+  elseif((CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64") OR (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "aarch64"))
+    set(OPENZEN_DOWNLOAD_URL "https://bitbucket.org/lpresearch/openzen/downloads/OpenZen-Ubuntu1604-arm64-1.1.0.tar.gz")
+    set(OPENZEN_DOWNLOAD_HASH 96db5bb4ed8d5c83a65f9ff38366bfa2cf682a9f1df5b536dec2f79f10938c37)
+  else()
+    message(FATAL_ERROR "No binary OpenZen release available for platform ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  endif()
+
   if(NOT EXISTS ${OPENZEN_BINARY_FOLDER})
     if(NOT EXISTS ${OPENZEN_ARCHIVE_FILE})
           message("Will unpack to ${OPENZEN_ARCHIVE_FILE}")
       message(STATUS "Downloading OpenZen release from ${OPENZEN_DOWNLOAD_URL}")
       file(DOWNLOAD ${OPENZEN_DOWNLOAD_URL} ${OPENZEN_ARCHIVE_FILE}
             SHOW_PROGRESS
-            EXPECTED_HASH SHA256=10f22cdc865ca0f485086e6463b46c61c4fa6ef9f6c5f5c07a4c184015ba1d12)
+            EXPECTED_HASH SHA256=${OPENZEN_DOWNLOAD_HASH})
     endif()
 
     # unpack
