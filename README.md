@@ -37,6 +37,7 @@ git clone --recurse-submodules https://bitbucket.org/lpresearch/openzenros.git
 
 # get your ROS environment going
 source /opt/ros/melodic/setup.bash
+cd ..
 catkin_make
 source ./devel/setup.bash
 ```
