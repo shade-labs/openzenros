@@ -8,6 +8,9 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs 
 )
 
+option(OPENZEN_ROS_BINARY_DOWNLOAD "Download binary builds" OFF)
+option(OPENZEN_ROS_BINARY_LIBRARIES "Download binary dependencies" OFF)
+
 # check if we can build OpenZen or if we need to download
 # a binary version
 set(BUILD_OPENZEN ON)
@@ -21,10 +24,15 @@ if(${CMAKE_VERSION} VERSION_LESS "3.10.0")
   set(BUILD_OPENZEN OFF)
 endif()
 
+if (NOT BUILD_OPENZEN AND OPENZEN_ROS_BINARY_DOWNLOAD)
+  message(FATAL_ERROR "Dependencies to build OpenZen not met and binary download disabled.")
+endif()
+
 if (BUILD_OPENZEN)
   SET(ZEN_BLUETOOTH OFF CACHE BOOL "Don't build bluetooth")
   SET(ZEN_TESTS OFF CACHE BOOL "Don't build tests")
   SET(ZEN_EXAMPLES OFF CACHE BOOL "Don't build examples")
+  SET(ZEN_USE_BINARY_LIBRARIES ${OPENZEN_ROS_BINARY_LIBRARIES} CACHE BOOL "Don't download binary dependencies (windows only)")
   add_subdirectory(openzen)
   SET(OPENZEN_TARGET_NAME OpenZen)
 else()
