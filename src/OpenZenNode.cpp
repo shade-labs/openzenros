@@ -69,7 +69,7 @@ public:
                 // not an event from a component
                 switch (event_value.eventType)
                 {
-                    case ZenSensorEvent_SensorDisconnected:
+                    case ZenEventType_SensorDisconnected:
                         ROS_INFO("OpenZen sensor disconnected");
                         return false;
                 }
@@ -77,7 +77,7 @@ public:
 
             if (event_value.component.handle == 1)
             {
-                if (event_value.eventType == ZenImuEvent_Sample)
+                if (event_value.eventType == ZenEventType_ImuData)
                 {
                     // IMU
                     auto const& d = event_value.data.imuData;
@@ -200,7 +200,7 @@ public:
                 {
                     switch (event.eventType)
                     {
-                    case ZenSensorEvent_SensorFound:
+                    case ZenEventType_SensorFound:
                         if (!firstSensorFound)
                         {
                             foundSens = event.data.sensorFound;
@@ -210,7 +210,7 @@ public:
                             event.data.sensorFound.ioType);
                         break;
 
-                    case ZenSensorEvent_SensorListingProgress:
+                    case ZenEventType_SensorListingProgress:
                         if (event.data.sensorListingProgress.progress == 1.0f)
                         {
                             listingDone = true;
