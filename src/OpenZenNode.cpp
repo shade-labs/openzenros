@@ -11,6 +11,8 @@
 #include "ros/ros.h"
 #include "sensor_msgs/Imu.h"
 #include "sensor_msgs/MagneticField.h"
+#include "sensor_msgs/NavSatFix.h"
+#include "sensor_msgs/NavSatStatus.h"
 #include "std_srvs/SetBool.h"
 #include "std_srvs/Trigger.h"
 #include "std_msgs/Bool.h"
@@ -31,6 +33,7 @@ public:
     // Publisher
     ros::Publisher imu_pub;
     ros::Publisher mag_pub;
+    ros::Publisher nav_pub;
     ros::Publisher autocalibration_status_pub;
 
     // Service
@@ -42,6 +45,7 @@ public:
     std::string m_sensorName;
     std::string m_sensorInterface;
     std::string frame_id;
+    std::string frame_id_gnss;
     int m_baudrate = 0;
 
 
@@ -75,7 +79,7 @@ public:
                 }
             }
 
-            if (event_value.component.handle == 1)
+            if (event_value.component == param.zen_imu_component)
             {
                 if (event_value.eventType == ZenEventType_ImuData)
                 {
@@ -124,6 +128,53 @@ public:
                     param.imu_pub.publish(imu_msg);
                     param.mag_pub.publish(mag_msg);
                 }
+            } else if (event_value.component == param.zen_gnss_component) {
+                if (event_value.eventType == ZenEventType_GnssData) {
+                    // Global navigation satellite system
+                    auto const& d = event_value.data.gnssData;
+
+                    sensor_msgs::NavSatFix nav_msg;
+                    sensor_msgs::NavSatStatus nav_status;
+                    nav_status.status = sensor_msgs::NavSatStatus::STATUS_NO_FIX;
+
+                    if (d.fixType == ZenGnssFixType_2dFix ||
+                        d.fixType == ZenGnssFixType_3dFix ||
+                        d.fixType == ZenGnssFixType_GnssAndDeadReckoning){
+                            nav_status.status = sensor_msgs::NavSatStatus::STATUS_FIX;
+                        }
+
+                    // even better, do we have an RTK navigation solution ?
+                    if (d.carrierPhaseSolution == ZenGnssFixCarrierPhaseSolution_FloatAmbiguities ||
+                        d.carrierPhaseSolution == ZenGnssFixCarrierPhaseSolution_FixedAmbiguities) {
+                            nav_status.status = sensor_msgs::NavSatStatus::STATUS_GBAS_FIX;
+                    }
+
+                    // OpenZen does not output the exact satellite service so assume its
+                    // only GPS for now
+                    nav_status.service = sensor_msgs::NavSatStatus::SERVICE_GPS;
+
+                    nav_msg.status = nav_status;
+                    nav_msg.latitude = d.latitude;
+                    nav_msg.longitude = d.longitude;
+                    nav_msg.altitude = d.height;
+
+                    // initialize all members to zero
+                    nav_msg.position_covariance = {0};
+                    // OpenZen provides accuracy at 1-sigma in meters
+                    // here we need covariance entries with m^2
+                    nav_msg.position_covariance[0] = std::pow(d.horizontalAccuracy, 2);
+                    nav_msg.position_covariance[4] = std::pow(d.verticalAccuracy, 2);
+                    // OpenZen GNNS Sensor does not provide an height estimation. Assume a
+                    // conservative height estimation of 10 meters accuracy.
+                    nav_msg.position_covariance[8] = std::pow(10.0, 2);
+
+                    nav_msg.position_covariance_type = nav_msg.COVARIANCE_TYPE_APPROXIMATED;
+
+                    nav_msg.header.stamp = ros::Time::now();
+                    nav_msg.header.frame_id = param.frame_id_gnss;
+
+                    param.nav_pub.publish(nav_msg);
+                }
             }
                 
             return true;
@@ -142,6 +193,7 @@ public:
         // use the LPMS convention
         private_nh.param<bool>("use_lpms_acceleration_convention", m_useLpmsAccelerationConvention, false);
         private_nh.param<std::string>("frame_id", frame_id, "imu");
+        private_nh.param<std::string>("frame_id_gnss", frame_id_gnss, "gnss");
 
         // Publisher
         imu_pub = nh.advertise<sensor_msgs::Imu>("data",1);
@@ -206,8 +258,8 @@ public:
                             foundSens = event.data.sensorFound;
                             firstSensorFound = true;
                         }
-                        ROS_INFO_STREAM("OpenZen sensor with name " << event.data.sensorFound.serialNumber << " on IO system found" <<
-                            event.data.sensorFound.ioType);
+                        ROS_INFO_STREAM("OpenZen sensor with name " << event.data.sensorFound.serialNumber << " on IO system " <<
+                            event.data.sensorFound.ioType << " found");
                         break;
 
                     case ZenEventType_SensorListingProgress:
@@ -272,6 +324,8 @@ public:
             return false;
         }
 
+        ZenComponentHandle_t zen_imu_component = {0};
+        ZenComponentHandle_t zen_gnss_component = {0};
 
         auto imuPair = m_zenSensor->getAnyComponentOfType(g_zenSensorType_Imu);
         auto& hasImu = imuPair.first;
@@ -280,16 +334,36 @@ public:
             // error, this sensor does not have an IMU component
             ROS_INFO("No IMU component available, sensor control commands won't be available");
         } else {
+            ROS_INFO("IMU component found");
             m_zenImu = std::unique_ptr<zen::ZenSensorComponent>( new zen::ZenSensorComponent(std::move(imuPair.second)));
+            zen_imu_component = m_zenImu->component();
             publishIsAutocalibrationActive();
+        }
+
+        auto gnssPair = m_zenSensor->getAnyComponentOfType(g_zenSensorType_Gnss);
+        auto& hasGnss = gnssPair.first;
+        if (!hasGnss)
+        {
+            // error, this sensor does not have an IMU component
+            ROS_INFO("No GNSS component available, sensor won't provide Global positioning data");
+        } else {
+            ROS_INFO("GNSS component found");
+            m_zenGnss = std::unique_ptr<zen::ZenSensorComponent>( new zen::ZenSensorComponent(std::move(gnssPair.second)));
+            zen_gnss_component = m_zenGnss->component();
+            // set up a publisher for Gnss
+            nav_pub = nh.advertise<sensor_msgs::NavSatFix>("nav",1);
         }
 
         m_sensorThread.start( SensorThreadParams{
             m_zenClient.get(),
             frame_id,
+            frame_id_gnss,
             imu_pub,
             mag_pub,
-            m_useLpmsAccelerationConvention
+            nav_pub,
+            m_useLpmsAccelerationConvention,
+            zen_imu_component,
+            zen_gnss_component
         } );
 
         ROS_INFO("Data streaming from sensor started");
@@ -414,6 +488,8 @@ public:
     std::unique_ptr<zen::ZenClient> m_zenClient;
     std::unique_ptr<zen::ZenSensor> m_zenSensor;
     std::unique_ptr<zen::ZenSensorComponent> m_zenImu;
+    // might be null if no Gnss component is available
+    std::unique_ptr<zen::ZenSensorComponent> m_zenGnss;
 
     bool m_openzenVerbose;
     bool m_useLpmsAccelerationConvention;
@@ -422,9 +498,13 @@ public:
     {
         zen::ZenClient * zenClient;
         std::string frame_id;
+        std::string frame_id_gnss;
         ros::Publisher & imu_pub;
         ros::Publisher & mag_pub;
+        ros::Publisher & nav_pub;
         bool useLpmsAccelerationConvention;
+        ZenComponentHandle_t zen_imu_component;
+        ZenComponentHandle_t zen_gnss_component;
     };
 
     ManagedThread<SensorThreadParams> m_sensorThread;

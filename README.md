@@ -77,6 +77,12 @@ Now you can print the IMU values from ROS with:
 rostopic echo /imu/data
 ```
 
+To output the values of a GPS unit (if available) use this command:
+
+```
+rostopic echo /imu/nav
+```
+
 Or plot some values (for example linear acceleration) with 
 
 ```
