@@ -5,6 +5,7 @@
   <description>ROS driver for LP-Research OpenZen</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
+  <maintainer email="thomas@lp-research.com">Feng</maintainer>
   <maintainer email="lxf@alubi.cn">Feng</maintainer>
   <maintainer email="yap@lp-research.com">H.E. YAP</maintainer>
 
