@@ -1,6 +1,8 @@
 <!--
     This test can be launched with
     > rostest openzen_sensor openzen_test.launch
+
+    Make sure roscore is running before starting this test.
 -->
 <launch>
     <!-- IG1 Sensor node -->

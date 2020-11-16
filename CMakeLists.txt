@@ -84,3 +84,8 @@ target_link_libraries(openzen_sensor_node
 )
 
 add_dependencies(openzen_sensor_node ${catkin_EXPORTED_TARGETS})
+
+if (CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  add_rostest(launch/openzen_test.launch)
+endif()
