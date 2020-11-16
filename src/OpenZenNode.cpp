@@ -327,6 +327,12 @@ public:
         ZenComponentHandle_t zen_imu_component = {0};
         ZenComponentHandle_t zen_gnss_component = {0};
 
+        if (m_sensorInterface == "TestSensor") {
+            // Test sensor does not return any components when queried but still
+            // provides IMU measurement with component 1
+            zen_imu_component.handle = 1;
+        }
+
         auto imuPair = m_zenSensor->getAnyComponentOfType(g_zenSensorType_Imu);
         auto& hasImu = imuPair.first;
         if (!hasImu)
