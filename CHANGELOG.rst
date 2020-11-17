@@ -12,7 +12,7 @@ Changelog for package openzen_driver
 * switched binary downloads to OpenZen 1.2.0
 * updated OpenZen to version 1.2.0
 * added output of GNSS measurement as ROS NavSatFix message
-* Contributors:
+* Contributors: LP-Research Inc. Team
 
 1.0.1 (2020-09-03)
 -----------
