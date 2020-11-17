@@ -24,7 +24,7 @@ if(${CMAKE_VERSION} VERSION_LESS "3.10.0")
   set(BUILD_OPENZEN OFF)
 endif()
 
-if (NOT BUILD_OPENZEN AND OPENZEN_ROS_BINARY_DOWNLOAD)
+if (NOT BUILD_OPENZEN AND NOT OPENZEN_ROS_BINARY_DOWNLOAD)
   message(FATAL_ERROR "Dependencies to build OpenZen not met and binary download disabled.")
 endif()
 
