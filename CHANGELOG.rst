@@ -3,7 +3,7 @@ Changelog for package openzen_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1.2.0 (2020-11-17)
------------
+------------------
 * fixed conditions check for build or download OpenZen options
 * fixed name of primary maintainer
 * added install target for openzen_node
@@ -15,7 +15,7 @@ Changelog for package openzen_driver
 * Contributors: LP-Research Inc. Team
 
 1.0.1 (2020-09-03)
------------
+------------------
 * changed OpenZen version to release 1.1.3
 * added option to select binary download and disabled binary downloads by default
 * updated to OpenZen 1.1.2 for ARM64
