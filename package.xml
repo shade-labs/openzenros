@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>openzen_sensor</name>
-  <version>1.0.1</version>
+  <version>1.2.0</version>
   <description>ROS driver for LP-Research OpenZen</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 

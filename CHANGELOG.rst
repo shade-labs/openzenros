@@ -2,6 +2,18 @@
 Changelog for package openzen_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.0 (2020-11-17)
+-----------
+* fixed conditions check for build or download OpenZen options
+* fixed name of primary maintainer
+* added install target for openzen_node
+* manually setting component ID in case a TestSensor is used
+* running rostest as part of the catkin CMake file
+* switched binary downloads to OpenZen 1.2.0
+* updated OpenZen to version 1.2.0
+* added output of GNSS measurement as ROS NavSatFix message
+* Contributors:
+
 1.0.1 (2020-09-03)
 -----------
 * changed OpenZen version to release 1.1.3
