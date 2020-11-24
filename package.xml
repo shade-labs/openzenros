@@ -2,7 +2,7 @@
 <package>
   <name>openzen_sensor</name>
   <version>1.2.0</version>
-  <description>ROS driver for LP-Research OpenZen</description>
+  <description>ROS driver for LP-Research inertial measurement units and satellite navigation senors</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <maintainer email="thomas@lp-research.com">Thomas Hauth</maintainer>
