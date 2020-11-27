@@ -4,6 +4,8 @@ This software allows to forward sensor data from sensor connected via OpenZen to
 
 OpenZen is a library for high performance sensor data streaming and processing and supports multiple sensor models: <https://bitbucket.org/lpresearch/openzen/>
 
+The full documentation for OpenZen ROS can be found here: [OpenZen ROS documentation](https://lpresearch.bitbucket.io/openzen/latest/ros.html#ros-api).
+
 ## Requirements
 
 ### Tools & Compiler
@@ -24,6 +26,21 @@ has access to the /dev/ttyUSB devices. You can do this by adding the user to the
 
 ```
 sudo adduser <username> dialout
+```
+
+## Installing via the Package Manager
+
+The OpenZen ROS driver is part of the official ROS distribution and you can conveniently install it via the package
+manager of your Linux distribution. Please check this website to see if the OpenZen ROS driver is available
+for the ROS distribution you use:
+
+[OpenZen ROS Package](https://index.ros.org/p/openzen_sensor/bitbucket-lpresearch-openzenros/)
+
+For example, on Ubuntu 18.04 and with ROS distribution Melodic Morenia, the OpenZen ROS driver
+can be installed with this command:
+
+```
+apt install ros-melodic-openzen-sensor
 ```
 
 ## Compilation
@@ -100,7 +117,3 @@ Alternatively, we have prepared a sample launch file openzen_lpms_ig1.launch to 
 ```
 roslaunch openzen_sensor openzen_lpms_ig1.launch
 ```
-
-
-## API
-Please refer to our [ROS API documentation](https://lpresearch.bitbucket.io/openzen/latest/ros.html#ros-api) for further details. 
