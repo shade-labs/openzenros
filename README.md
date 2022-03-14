@@ -88,6 +88,8 @@ give a specfic baud rate setting:
 rosrun openzen_sensor openzen_sensor_node _sensor_name:="LPMSCU2000573" _baudrate:=115200
 ```
 
+Do note that the default sensor interface is `LinuxDevice`, so the `_sensor_name` is mostly likely to be in the form of `"devicefile:/dev/ttyUSB0"`. For more detail please refer to [OpenZen's docs](https://lpresearch.bitbucket.io/openzen/latest/io_systems.html#linux-device).
+
 Now you can print the IMU values from ROS with:
 
 ```
@@ -109,8 +111,8 @@ rosrun rqt_plot rqt_plot /imu/data/linear_acceleration
 If you want to readout the values of two OpenZen sensors simultanously, you need to rename the topics and the node names likes this:
 
 ```
-rosrun openzen_sensor openzen_sensor __name:="cu2node" _sensor_name:="LPMSCU2000573" imu:=/cu2_imu 
-rosrun openzen_sensor openzen_sensor __name:="ig1_node" _sensor_name:="LPMSIG1000032" imu:=/ig1_imu
+rosrun openzen_sensor openzen_sensor_node __name:="cu2node" _sensor_name:="LPMSCU2000573" imu:=/cu2_imu 
+rosrun openzen_sensor openzen_sensor_node __name:="ig1_node" _sensor_name:="LPMSIG1000032" imu:=/ig1_imu
 ```
 
 Alternatively, we have prepared a sample launch file openzen_lpms_ig1.launch to demonstrate data acquisition and plotting using openzen_sensor_node:
