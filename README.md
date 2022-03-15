@@ -87,8 +87,7 @@ give a specfic baud rate setting:
 ```
 rosrun openzen_sensor openzen_sensor_node _sensor_name:="LPMSCU2000573" _baudrate:=115200
 ```
-
-Do note that the default sensor interface is `LinuxDevice`, so the `_sensor_name` is mostly likely to be in the form of `"devicefile:/dev/ttyUSB0"`. For more detail please refer to [OpenZen's docs](https://lpresearch.bitbucket.io/openzen/latest/io_systems.html#linux-device).
+**Do note that the default sensor interface is `LinuxDevice`, so the value for `_sensor_name` will most likely be in the form of `"devicefile:/dev/ttyUSB0"`. For more detail please refer to [OpenZen's docs](https://lpresearch.bitbucket.io/openzen/latest/io_systems.html#linux-device).**
 
 Now you can print the IMU values from ROS with:
 
