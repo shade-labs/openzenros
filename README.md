@@ -1,3 +1,5 @@
+## For user working with any sensors except for [LPMS2 sensors](https://lp-research.atlassian.net/wiki/spaces/LKB/pages/1103790206/LPMS2+Series+Documentation), please go to `feature/LPMS3_support` branch.
+
 # OpenZen Node for ROS
 
 This software allows to forward sensor data from sensor connected via OpenZen to ROS.
