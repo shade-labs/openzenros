@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <package>
   <name>openzen_sensor</name>
-  <version>1.2.0</version>
+  <version>1.3.1</version>
   <description>ROS driver for LP-Research inertial measurement units and satellite navigation senors</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <maintainer email="thomas@lp-research.com">Thomas Hauth</maintainer>
   <maintainer email="lxf@alubi.cn">Feng</maintainer>
   <maintainer email="yap@lp-research.com">H.E. YAP</maintainer>
+  <maintainer email="yongkin@lp-research.com">Yongkin</maintainer>
 
   <!-- This packages license -->
   <license>MIT</license>

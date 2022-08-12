@@ -21,7 +21,7 @@ catkin_make -DCMAKE_C_COMPILER=gcc-7 -DCMAKE_CXX_COMPILER=g++-7
 ```
 ### Serial Port Access Rights
 
-After this call, you should logout and login with this user to ensure the changed permissions are in effect.
+After this call, you should **logout and login** with this user to ensure the changed permissions are in effect.
 
 To allow access to sensors connected via USB, you need to ensure that the user running the ROS sensor node
 has access to the /dev/ttyUSB devices. You can do this by adding the user to the dialout group.
@@ -54,9 +54,13 @@ cd catskin_ws/src
 
 git clone --recurse-submodules https://bitbucket.org/lpresearch/openzenros.git
 
+# make sure both OpenZenROS and its OpenZen dependency are on the correct branch / commit
+cd openzenros && git checkout feature/LPMS3_support
+cd openzen && git checkout 7218b010593616045a52a95a9f79465a404738f6
+
 # get your ROS environment going
 source /opt/ros/melodic/setup.bash
-cd ..
+cd ../../..
 catkin_make
 source ./devel/setup.bash
 ```
@@ -80,15 +84,16 @@ By default, it will connect to the first available sensor. If you want to connec
 a specific sensor, you can use the serial name of the sensor as parameter, for example:
 
 ```
-rosrun openzen_sensor openzen_sensor_node _sensor_name:="LPMSCU2000573"
+rosrun openzen_sensor openzen_sensor_node _sensor_name:="devicefile:/dev/ttyUSB0"
 ```
 
 If your sensor is configured for a different baud rate, you can use the baudrate parameter to
 give a specfic baud rate setting:
 
 ```
-rosrun openzen_sensor openzen_sensor_node _sensor_name:="LPMSCU2000573" _baudrate:=115200
+rosrun openzen_sensor openzen_sensor_node _sensor_name:="devicefile:/dev/ttyUSB0" _baudrate:=921600
 ```
+**Do note that the default sensor interface is `LinuxDevice`, so the value for `_sensor_name` will most likely be in the form of `"devicefile:/dev/ttyUSB0"`. For more detail please refer to [OpenZen's docs](https://lpresearch.bitbucket.io/openzen/latest/io_systems.html#linux-device).**
 
 Now you can print the IMU values from ROS with:
 
@@ -111,8 +116,8 @@ rosrun rqt_plot rqt_plot /imu/data/linear_acceleration
 If you want to readout the values of two OpenZen sensors simultanously, you need to rename the topics and the node names likes this:
 
 ```
-rosrun openzen_sensor openzen_sensor __name:="cu2node" _sensor_name:="LPMSCU2000573" imu:=/cu2_imu 
-rosrun openzen_sensor openzen_sensor __name:="ig1_node" _sensor_name:="LPMSIG1000032" imu:=/ig1_imu
+rosrun openzen_sensor openzen_sensor_node __name:="cu2node" _sensor_name:="devicefile:/dev/ttyUSB0" imu:=/cu2_imu 
+rosrun openzen_sensor openzen_sensor_node __name:="ig1_node" _sensor_name:="devicefile:/dev/ttyUSB1" imu:=/ig1_imu
 ```
 
 Alternatively, we have prepared a sample launch file openzen_lpms_ig1.launch to demonstrate data acquisition and plotting using openzen_sensor_node:
