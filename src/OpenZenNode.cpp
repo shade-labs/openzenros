@@ -105,18 +105,9 @@ public:
 
                     // Fill angular velocity data
                     // - scale from deg/s to rad/s
-                    switch (m_defaultGyroIdx) {
-                        case Gyro1AsDefault:
-                            imu_msg.angular_velocity.x = d.g1[0] * cDegToRad;
-                            imu_msg.angular_velocity.y = d.g1[1] * cDegToRad;
-                            imu_msg.angular_velocity.z = d.g1[2] * cDegToRad;
-                            break;
-                        case Gyro2AsDefault:
-                            imu_msg.angular_velocity.x = d.g2[0] * cDegToRad;
-                            imu_msg.angular_velocity.y = d.g2[1] * cDegToRad;
-                            imu_msg.angular_velocity.z = d.g2[2] * cDegToRad;
-                            break;
-                    }
+		    imu_msg.angular_velocity.x = d.a[0] * cDegToRad;
+		    imu_msg.angular_velocity.y = d.a[1] * cDegToRad;
+		    imu_msg.angular_velocity.z = d.a[2] * cDegToRad;
 
                     // Fill linear acceleration data
                     const float rosConversion = -1.0 * (!param.useLpmsAccelerationConvention) +
@@ -318,34 +309,34 @@ public:
             m_zenSensor = std::unique_ptr<zen::ZenSensor>( new zen::ZenSensor(std::move(sensorObtainPair.second)));
         }
 
-        {
-            std::string deviceName = m_zenSensor->deviceName();
-            ROS_INFO_STREAM("Sensor name is " << deviceName);
-            
-            std::map<std::string, DefaultGyro> mapDeviceToDefaultGyro = {
-                // NAV series
-                {"LPMS-NAV3-CAN", Gyro1AsDefault}, {"LPMS-NAV3-RS232", Gyro1AsDefault}, {"LPMS-NAV3-RS485", Gyro1AsDefault}, {"LPMS-NAV3-TTL", Gyro1AsDefault},
-
-                // CURS and AL series share the same names
-                {"LPMS-CURS3-TTL", Gyro2AsDefault}, {"LPMS-CURS3-RS232", Gyro2AsDefault}, {"LPMS-CURS3-CAN", Gyro2AsDefault},
-
-                // U series
-                {"LPMS-CU3", Gyro2AsDefault}, {"LPMS-URS3", Gyro2AsDefault}, {"LPMS-UTTL3", Gyro2AsDefault},
-
-                // IG1 series
-                {"LPMS-IG1-CAN", Gyro1AsDefault}, {"LPMS-IG1-RS232", Gyro1AsDefault}, {"LPMS-IG1-RS485", Gyro1AsDefault},
-
-                // IG1 (with GPS)
-                {"LPMS-IG1P-CAN", Gyro1AsDefault}, {"LPMS-IG1P-RS232", Gyro1AsDefault}, {"LPMS-IG1P-RS485", Gyro1AsDefault},
-
-                // BE series
-                {"LPMS-BE1", Gyro2AsDefault}, {"LPMS-BE2", Gyro2AsDefault}, 
-
-                // match every other legacy sensor
-                {"*", Gyro1AsDefault}
-            };
-            m_defaultGyroIdx = mapDeviceToDefaultGyro[deviceName];
-        }
+//        {
+//            std::string deviceName = m_zenSensor->deviceName();
+//            ROS_INFO_STREAM("Sensor name is " << deviceName);
+//            
+//            std::map<std::string, DefaultGyro> mapDeviceToDefaultGyro = {
+//                // NAV series
+//                {"LPMS-NAV3-CAN", Gyro1AsDefault}, {"LPMS-NAV3-RS232", Gyro1AsDefault}, {"LPMS-NAV3-RS485", Gyro1AsDefault}, {"LPMS-NAV3-TTL", Gyro1AsDefault},
+//
+//                // CURS and AL series share the same names
+//                {"LPMS-CURS3-TTL", Gyro2AsDefault}, {"LPMS-CURS3-RS232", Gyro2AsDefault}, {"LPMS-CURS3-CAN", Gyro2AsDefault},
+//
+//                // U series
+//                {"LPMS-CU3", Gyro2AsDefault}, {"LPMS-URS3", Gyro2AsDefault}, {"LPMS-UTTL3", Gyro2AsDefault},
+//
+//                // IG1 series
+//                {"LPMS-IG1-CAN", Gyro1AsDefault}, {"LPMS-IG1-RS232", Gyro1AsDefault}, {"LPMS-IG1-RS485", Gyro1AsDefault},
+//
+//                // IG1 (with GPS)
+//                {"LPMS-IG1P-CAN", Gyro1AsDefault}, {"LPMS-IG1P-RS232", Gyro1AsDefault}, {"LPMS-IG1P-RS485", Gyro1AsDefault},
+//
+//                // BE series
+//                {"LPMS-BE1", Gyro2AsDefault}, {"LPMS-BE2", Gyro2AsDefault}, 
+//
+//                // match every other legacy sensor
+//                {"*", Gyro1AsDefault}
+//            };
+//            m_defaultGyroIdx = mapDeviceToDefaultGyro[deviceName];
+//        }
     }
 
     bool run(void)
@@ -383,6 +374,12 @@ public:
             zen_imu_component = m_zenImu->component();
             publishIsAutocalibrationActive();
         }
+
+        if (auto error = m_zenImu->setInt32Property(ZenImuProperty_SamplingRate, 500)) 
+        {
+            ROS_ERROR("Failed to set sampling rate to 500Hz");
+            return false;
+        } 
 
         auto gnssPair = m_zenSensor->getAnyComponentOfType(g_zenSensorType_Gnss);
         auto& hasGnss = gnssPair.first;
@@ -556,7 +553,7 @@ public:
         Gyro2AsDefault
     };
 
-    DefaultGyro m_defaultGyroIdx;
+    //DefaultGyro m_defaultGyroIdx;
 
     ManagedThread<SensorThreadParams> m_sensorThread;
 };
